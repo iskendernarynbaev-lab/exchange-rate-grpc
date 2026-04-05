@@ -46,12 +46,9 @@ func TestServiceGetRatesSuccess(t *testing.T) {
 		mockClient{asks: []float64{100, 101}, bids: []float64{99, 98}},
 		repo,
 		met,
-		"topn",
-		1,
-		2,
 	)
 
-	rate, err := svc.GetRates(context.Background())
+	rate, err := svc.GetRates(context.Background(), "topn", 1, 2)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -72,9 +69,9 @@ func TestServiceGetRatesSuccess(t *testing.T) {
 func TestServiceGetRatesFetchError(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	met := metrics.New(reg)
-	svc := New(mockClient{err: errors.New("boom")}, &mockRepo{}, met, "topn", 1, 1)
+	svc := New(mockClient{err: errors.New("boom")}, &mockRepo{}, met)
 
-	_, err := svc.GetRates(context.Background())
+	_, err := svc.GetRates(context.Background(), "topn", 1, 1)
 	if err == nil {
 		t.Fatal("expected error")
 	}
@@ -87,12 +84,9 @@ func TestServiceGetRatesStoreError(t *testing.T) {
 		mockClient{asks: []float64{100}, bids: []float64{99}},
 		&mockRepo{err: errors.New("db error")},
 		met,
-		"topn",
-		1,
-		1,
 	)
 
-	_, err := svc.GetRates(context.Background())
+	_, err := svc.GetRates(context.Background(), "topn", 1, 1)
 	if err == nil {
 		t.Fatal("expected error")
 	}

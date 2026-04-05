@@ -6,11 +6,11 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/iskendernarynbaev-lab/exchange-rate-grpc/internal/metrics"
 	"github.com/iskendernarynbaev-lab/exchange-rate-grpc/internal/model"
 	"github.com/iskendernarynbaev-lab/exchange-rate-grpc/internal/service"
+	ratesv1 "github.com/iskendernarynbaev-lab/exchange-rate-grpc/pkg/api/rates/v1"
 )
 
 type grpcMockClient struct{}
@@ -26,10 +26,13 @@ func (grpcMockRepo) StoreRate(context.Context, model.Rate) error { return nil }
 func TestRatesServerGetRates(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	met := metrics.New(reg)
-	svc := service.New(grpcMockClient{}, grpcMockRepo{}, met, "topn", 1, 1)
+	svc := service.New(grpcMockClient{}, grpcMockRepo{}, met)
 	srv := NewRatesServer(svc, zap.NewNop())
 
-	resp, err := srv.GetRates(context.Background(), &emptypb.Empty{})
+	resp, err := srv.GetRates(context.Background(), &ratesv1.GetRatesRequest{
+		Method: "topn",
+		N:      1,
+	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

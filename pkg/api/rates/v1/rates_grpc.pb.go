@@ -8,7 +8,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 const (
@@ -17,7 +16,7 @@ const (
 
 // RatesServiceClient is the client API for RatesService service.
 type RatesServiceClient interface {
-	GetRates(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetRatesResponse, error)
+	GetRates(ctx context.Context, in *GetRatesRequest, opts ...grpc.CallOption) (*GetRatesResponse, error)
 }
 
 type ratesServiceClient struct {
@@ -29,7 +28,7 @@ func NewRatesServiceClient(cc grpc.ClientConnInterface) RatesServiceClient {
 	return &ratesServiceClient{cc}
 }
 
-func (c *ratesServiceClient) GetRates(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetRatesResponse, error) {
+func (c *ratesServiceClient) GetRates(ctx context.Context, in *GetRatesRequest, opts ...grpc.CallOption) (*GetRatesResponse, error) {
 	out := new(GetRatesResponse)
 	err := c.cc.Invoke(ctx, RatesService_GetRates_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -40,14 +39,14 @@ func (c *ratesServiceClient) GetRates(ctx context.Context, in *emptypb.Empty, op
 
 // RatesServiceServer is the server API for RatesService service.
 type RatesServiceServer interface {
-	GetRates(context.Context, *emptypb.Empty) (*GetRatesResponse, error)
+	GetRates(context.Context, *GetRatesRequest) (*GetRatesResponse, error)
 	mustEmbedUnimplementedRatesServiceServer()
 }
 
 // UnimplementedRatesServiceServer is embedded for forward compatibility.
 type UnimplementedRatesServiceServer struct{}
 
-func (UnimplementedRatesServiceServer) GetRates(context.Context, *emptypb.Empty) (*GetRatesResponse, error) {
+func (UnimplementedRatesServiceServer) GetRates(context.Context, *GetRatesRequest) (*GetRatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRates not implemented")
 }
 func (UnimplementedRatesServiceServer) mustEmbedUnimplementedRatesServiceServer() {}
@@ -63,7 +62,7 @@ func RegisterRatesServiceServer(s grpc.ServiceRegistrar, srv RatesServiceServer)
 }
 
 func _RatesService_GetRates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(GetRatesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -75,7 +74,7 @@ func _RatesService_GetRates_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: RatesService_GetRates_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RatesServiceServer).GetRates(ctx, req.(*emptypb.Empty))
+		return srv.(RatesServiceServer).GetRates(ctx, req.(*GetRatesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

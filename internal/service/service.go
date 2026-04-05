@@ -23,16 +23,13 @@ type Service struct {
 	client  MarketClient
 	repo    RateRepository
 	metrics *metrics.Metrics
-	method  string
-	n       int
-	m       int
 }
 
-func New(client MarketClient, repo RateRepository, metrics *metrics.Metrics, method string, n, m int) *Service {
-	return &Service{client: client, repo: repo, metrics: metrics, method: method, n: n, m: m}
+func New(client MarketClient, repo RateRepository, metrics *metrics.Metrics) *Service {
+	return &Service{client: client, repo: repo, metrics: metrics}
 }
 
-func (s *Service) GetRates(ctx context.Context) (model.Rate, error) {
+func (s *Service) GetRates(ctx context.Context, method string, n, m int) (model.Rate, error) {
 	start := time.Now()
 	ctx, span := otel.Tracer("rates-service").Start(ctx, "GetRates")
 	defer span.End()
@@ -43,13 +40,13 @@ func (s *Service) GetRates(ctx context.Context) (model.Rate, error) {
 		return model.Rate{}, fmt.Errorf("fetch market data: %w", err)
 	}
 
-	ask, err := Calculate(s.method, s.n, s.m, asks)
+	ask, err := Calculate(method, n, m, asks)
 	if err != nil {
 		s.observe("error", start)
 		return model.Rate{}, fmt.Errorf("calculate ask: %w", err)
 	}
 
-	bid, err := Calculate(s.method, s.n, s.m, bids)
+	bid, err := Calculate(method, n, m, bids)
 	if err != nil {
 		s.observe("error", start)
 		return model.Rate{}, fmt.Errorf("calculate bid: %w", err)

@@ -10,13 +10,75 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	descriptorpb "google.golang.org/protobuf/types/descriptorpb"
-	_ "google.golang.org/protobuf/types/known/emptypb"
 )
 
 const (
 	_ = protoimpl.EnforceVersion(20 - protoimpl.MinVersion)
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+// GetRatesRequest is request payload for dynamic calculation parameters.
+type GetRatesRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Method string `protobuf:"bytes,1,opt,name=method,proto3" json:"method,omitempty"`
+	N      int32  `protobuf:"varint,2,opt,name=n,proto3" json:"n,omitempty"`
+	M      int32  `protobuf:"varint,3,opt,name=m,proto3" json:"m,omitempty"`
+}
+
+func (x *GetRatesRequest) Reset() {
+	*x = GetRatesRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_api_rates_v1_rates_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetRatesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRatesRequest) ProtoMessage() {}
+
+func (x *GetRatesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_api_rates_v1_rates_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (*GetRatesRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_api_rates_v1_rates_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *GetRatesRequest) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
+}
+
+func (x *GetRatesRequest) GetN() int32 {
+	if x != nil {
+		return x.N
+	}
+	return 0
+}
+
+func (x *GetRatesRequest) GetM() int32 {
+	if x != nil {
+		return x.M
+	}
+	return 0
+}
 
 // GetRatesResponse is a strongly typed gRPC response payload.
 type GetRatesResponse struct {
@@ -33,7 +95,7 @@ type GetRatesResponse struct {
 func (x *GetRatesResponse) Reset() {
 	*x = GetRatesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_api_rates_v1_rates_proto_msgTypes[0]
+		mi := &file_pkg_api_rates_v1_rates_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -46,7 +108,7 @@ func (x *GetRatesResponse) String() string {
 func (*GetRatesResponse) ProtoMessage() {}
 
 func (x *GetRatesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_api_rates_v1_rates_proto_msgTypes[0]
+	mi := &file_pkg_api_rates_v1_rates_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +120,7 @@ func (x *GetRatesResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (*GetRatesResponse) Descriptor() ([]byte, []int) {
-	return file_pkg_api_rates_v1_rates_proto_rawDescGZIP(), []int{0}
+	return file_pkg_api_rates_v1_rates_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetRatesResponse) GetAsk() float64 {
@@ -101,11 +163,20 @@ func file_pkg_api_rates_v1_rates_proto_rawDescGZIP() []byte {
 	return file_pkg_api_rates_v1_rates_proto_rawDescData
 }
 
-var file_pkg_api_rates_v1_rates_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_pkg_api_rates_v1_rates_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_pkg_api_rates_v1_rates_proto_goTypes = []any{
-	(*GetRatesResponse)(nil), // 0: rates.v1.GetRatesResponse
+	(*GetRatesRequest)(nil),  // 0: rates.v1.GetRatesRequest
+	(*GetRatesResponse)(nil), // 1: rates.v1.GetRatesResponse
 }
-var file_pkg_api_rates_v1_rates_proto_depIdxs = []int32{}
+var file_pkg_api_rates_v1_rates_proto_depIdxs = []int32{
+	0, // 0: rates.v1.RatesService.GetRates:input_type -> rates.v1.GetRatesRequest
+	1, // 1: rates.v1.RatesService.GetRates:output_type -> rates.v1.GetRatesResponse
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
+}
 
 func init() { file_pkg_api_rates_v1_rates_proto_init() }
 func file_pkg_api_rates_v1_rates_proto_init() {
@@ -117,10 +188,33 @@ func file_pkg_api_rates_v1_rates_proto_init() {
 		Syntax:  proto.String("proto3"),
 		Name:    proto.String("pkg/api/rates/v1/rates.proto"),
 		Package: proto.String("rates.v1"),
-		Dependency: []string{
-			"google/protobuf/empty.proto",
-		},
 		MessageType: []*descriptorpb.DescriptorProto{
+			{
+				Name: proto.String("GetRatesRequest"),
+				Field: []*descriptorpb.FieldDescriptorProto{
+					{
+						Name:     proto.String("method"),
+						JsonName: proto.String("method"),
+						Number:   proto.Int32(1),
+						Label:    descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL.Enum(),
+						Type:     descriptorpb.FieldDescriptorProto_TYPE_STRING.Enum(),
+					},
+					{
+						Name:     proto.String("n"),
+						JsonName: proto.String("n"),
+						Number:   proto.Int32(2),
+						Label:    descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL.Enum(),
+						Type:     descriptorpb.FieldDescriptorProto_TYPE_INT32.Enum(),
+					},
+					{
+						Name:     proto.String("m"),
+						JsonName: proto.String("m"),
+						Number:   proto.Int32(3),
+						Label:    descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL.Enum(),
+						Type:     descriptorpb.FieldDescriptorProto_TYPE_INT32.Enum(),
+					},
+				},
+			},
 			{
 				Name: proto.String("GetRatesResponse"),
 				Field: []*descriptorpb.FieldDescriptorProto{
@@ -161,7 +255,7 @@ func file_pkg_api_rates_v1_rates_proto_init() {
 				Method: []*descriptorpb.MethodDescriptorProto{
 					{
 						Name:       proto.String("GetRates"),
-						InputType:  proto.String(".google.protobuf.Empty"),
+						InputType:  proto.String(".rates.v1.GetRatesRequest"),
 						OutputType: proto.String(".rates.v1.GetRatesResponse"),
 					},
 				},
@@ -177,6 +271,18 @@ func file_pkg_api_rates_v1_rates_proto_init() {
 
 	if !protoimpl.UnsafeEnabled {
 		file_pkg_api_rates_v1_rates_proto_msgTypes[0].Exporter = func(v any, i int) any {
+			switch v := v.(*GetRatesRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_api_rates_v1_rates_proto_msgTypes[1].Exporter = func(v any, i int) any {
 			switch v := v.(*GetRatesResponse); i {
 			case 0:
 				return &v.state
@@ -196,7 +302,7 @@ func file_pkg_api_rates_v1_rates_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_api_rates_v1_rates_proto_rawDescData,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

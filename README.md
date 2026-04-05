@@ -39,22 +39,50 @@ configs/config.yaml          # конфиг приложения
 ## Быстрый старт
 
 ```bash
-make build
-docker-compose up -d
-make migrate-up
-docker-compose run --rm exchange-rate-grpc ./exchange-rate-grpc
+make docker
 ```
 
-Проверка метода:
+`make docker` (или `make docker-build`) выполняет шаги последовательно:
+1. поднимает PostgreSQL
+2. запускает миграции (`migrator`)
+3. поднимает `app`
+
+Проверка метода (`topn`, взять 1-й уровень):
 
 ```bash
-grpcurl -plaintext localhost:9090 rates.v1.RatesService/GetRates
+grpcurl -plaintext -d '{"method":"topn","n":1}' localhost:9090 rates.v1.RatesService/GetRates
+```
+
+Проверка метода (`avgnm`, среднее по диапазону 1..3):
+
+```bash
+grpcurl -plaintext -d '{"method":"avgnm","n":1,"m":3}' localhost:9090 rates.v1.RatesService/GetRates
 ```
 
 Проверка healthcheck:
 
 ```bash
 grpcurl -plaintext -d '{"service":""}' localhost:9090 grpc.health.v1.Health/Check
+```
+
+## Примеры gRPC запросов
+
+`topn` (взять N-ю позицию стакана):
+
+```bash
+grpcurl -plaintext -d '{"method":"topn","n":1}' localhost:9090 rates.v1.RatesService/GetRates
+```
+
+`avgnm` (среднее по диапазону [N;M]):
+
+```bash
+grpcurl -plaintext -d '{"method":"avgnm","n":1,"m":3}' localhost:9090 rates.v1.RatesService/GetRates
+```
+
+Пример невалидного запроса (`m < n` для `avgnm`, вернется `InvalidArgument`):
+
+```bash
+grpcurl -plaintext -d '{"method":"avgnm","n":5,"m":3}' localhost:9090 rates.v1.RatesService/GetRates
 ```
 
 ## Команды Make
@@ -64,6 +92,7 @@ make build
 make test
 make run
 make docker-build
+make docker
 make lint
 
 make migrate-status
@@ -71,6 +100,8 @@ make migrate-up
 make migrate-down
 make migrate-create NAME=add_new_table
 ```
+
+`make docker-build` (или коротко `make docker`) поднимает весь стек в правильном порядке (PostgreSQL -> migrator -> app).
 
 ## Конфиг
 
@@ -97,8 +128,6 @@ server:
 - `DATABASE_URL` — строка подключения к PostgreSQL
 - `GRPC_ADDR` — адрес gRPC (по умолчанию `:9090`)
 - `METRICS_ADDR` — адрес HTTP метрик (по умолчанию `:2112`)
-- `CALC_METHOD` — `topn` или `avgnm`
-- `CALC_N`, `CALC_M` — параметры расчета
 - `GRINEX_URL`, `GRINEX_SYMBOL` — источник котировок
 - `LOG_LEVEL` — `debug|info|warn|error`
 
@@ -108,7 +137,8 @@ server:
 
 - `internal/storage/migrations`
 
-Выполняются только вручную через `make migrate-*`.
+Можно запускать вручную через `make migrate-*`.
+При `make docker-build` миграции запускаются автоматически шагом `docker-compose run --rm migrator`.
 
 ## Метрики и health
 

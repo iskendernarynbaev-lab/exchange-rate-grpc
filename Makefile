@@ -8,19 +8,24 @@ include .env
 export
 endif
 
-.PHONY: build test docker-build run lint migrate-up migrate-down migrate-status migrate-create
+.PHONY: build test docker docker-build run lint migrate-up migrate-down migrate-status migrate-create
 
 build:
-	$(GO) build -o $(APP_NAME) ./cmd/app
+	$(GO) build -o $(APP_NAME) ./cmd/exchange-rate-grpc
 
 test:
 	$(GO) test ./...
 
 docker-build:
-	docker build -t grinex-rates:latest .
+	docker-compose up -d --build postgres
+	docker-compose run --rm migrator
+	docker-compose up -d --build app
+	@docker-compose ps --services --filter "status=running" | grep -qx "app" || (echo "app is not running, showing logs..." && docker-compose logs --tail=200 app && exit 1)
+
+docker: docker-build
 
 run:
-	$(GO) run ./cmd/app
+	$(GO) run ./cmd/exchange-rate-grpc
 
 lint:
 	docker run --rm -v $(PWD):/app -w /app golangci/golangci-lint:v2.1.6 golangci-lint run ./...
