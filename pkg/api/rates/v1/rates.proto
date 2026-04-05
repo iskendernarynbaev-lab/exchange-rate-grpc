@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package rates.v1;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/iskendernarynbaev-lab/exchange-rate-grpc/pkg/api/rates/v1;ratesv1";
+
+message GetRatesResponse {
+  double ask = 1;
+  double bid = 2;
+  string timestamp = 3;
+  int64 unix_millis = 4;
+}
+
+service RatesService {
+  rpc GetRates(google.protobuf.Empty) returns (GetRatesResponse);
+}

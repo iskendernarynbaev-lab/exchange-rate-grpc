@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: grinex
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d grinex"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: grinex-rates:latest
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/grinex?sslmode=disable
+    ports:
+      - "9090:9090"
+      - "2112:2112"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

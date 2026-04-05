@@ -1,0 +1,20 @@
+server:
+  grpc_addr: ${GRPC_ADDR:}
+  metrics_addr: ${METRICS_ADDR:}
+  shutdown_timeout: ${SHUTDOWN_TIMEOUT:10s}
+
+database:
+  url: ${DATABASE_URL:}
+
+grinex:
+  url: ${GRINEX_URL:}
+  symbol: ${GRINEX_SYMBOL:}
+
+calculation:
+  method: ${CALC_METHOD:}
+  n: ${CALC_N:1}
+  m: ${CALC_M:3}
+
+observability:
+  otel_service_name: ${OTEL_SERVICE_NAME:}
+  log_level: ${LOG_LEVEL:info}
